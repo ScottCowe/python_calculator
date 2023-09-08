@@ -16,8 +16,8 @@ class Tokenizer:
         self.tokens = []
 
         self.validate_input()
-        #self.format_input()
-        self.parse_input()
+        self.format_input()
+        #self.parse_input()
 
     def validate_input(self):
         for i in range(len(self.input)):
@@ -28,42 +28,36 @@ class Tokenizer:
             isDecimalPoint = current_char == "."
 
             if not isOperator and not isParenthesis and not isDecimalPoint and not current_char.isnumeric():
-               raise Exception("Input is not valid") 
+               raise Exception("Input is not valid")
+
+            # TODO: Check if every parenthesis closes
 
         print(f"'{self.input}' is valid input")
     
     # Formats input so that a subtraction is an addition of a negative, also cleans up subtracting negatives and multiplying parenthesis
     def format_input(self):
-        input_str = self.input
-        input_str_length = len(self.input)
+        output_string = ""
 
-        i = 0
+        for i in range(len(self.input)):
+            current_char = self.input[i]
+            previous_char = self.input[i - 1] if i != 0 else ""
 
-        while i < input_str_length:
-            current_char = input_str[i]
-            next_char = input_str[i+1]
+            print(f"{current_char} {previous_char}")
+            
+            if current_char == "(" and previous_char.isnumeric(): # multiplying brackets like 5(4 + 3)
+                output_string += "*" # so bracket is like 5*(4+3)
+            elif current_char.isnumeric() and previous_char == "-": 
+                output_string = output_string[:-1] # Removes last character (-) of output
+                output_string += "+-"
+            elif current_char == previous_char and current_char == "-":
+                output_string = output_string[:-1]
+                output_string += "+"
+                current_char = ""
 
-            print(f"{i} {current_char} {input_str}")
+            output_string += current_char
 
-            if current_char == "-":
-                before = input_str[:i]
-                after = input_str[i:]
-
-                input_str = before + "+" + after
-                input_str_length = len(input_str)
-
-                i += 1
-
-                if next_char == "-":
-                    after = input_str[i+2:]
-                    print(input_str)
-                    print(before)
-                    print(after)
-
-                    input_str = before + "+" + after
-
-                    i -= 1
-            i += 1
+        self.input = output_string
+        print(f"Formatted input is {self.input}")
 
     # Parses the input into an array of tokens
     def parse_input(self):
@@ -121,4 +115,4 @@ class Tokenizer:
     def isNumeric(self, string):
         return string.isnumeric() or string == "." or string == "-"
 
-tokenizer = Tokenizer("+123+456")
+tokenizer = Tokenizer("+123--456")

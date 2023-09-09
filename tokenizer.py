@@ -17,7 +17,7 @@ class Tokenizer:
 
         self.validate_input()
         self.format_input()
-        #self.parse_input()
+        self.parse_input()
 
     def validate_input(self):
         for i in range(len(self.input)):
@@ -31,6 +31,7 @@ class Tokenizer:
                raise Exception("Input is not valid")
 
             # TODO: Check if every parenthesis closes
+            # TODO: Ensure that operators do not repeat
 
         print(f"'{self.input}' is valid input")
     
@@ -42,8 +43,6 @@ class Tokenizer:
             current_char = self.input[i]
             previous_char = self.input[i - 1] if i != 0 else ""
 
-            print(f"{current_char} {previous_char}")
-            
             if current_char == "(" and previous_char.isnumeric(): # multiplying brackets like 5(4 + 3)
                 output_string += "*" # so bracket is like 5*(4+3)
             elif current_char.isnumeric() and previous_char == "-": 
@@ -52,16 +51,16 @@ class Tokenizer:
             elif current_char == previous_char and current_char == "-":
                 output_string = output_string[:-1]
                 output_string += "+"
-                current_char = ""
+                current_char = "" # I don't really like this solution but eh
 
             output_string += current_char
 
         self.input = output_string
-        print(f"Formatted input is {self.input}")
+        print(f"Formatted input is '{self.input}'")
 
     # Parses the input into an array of tokens
     def parse_input(self):
-        input_str = self.input
+        """input_str = self.input
         input_str_length = len(self.input)
         end_index = 0
 
@@ -107,12 +106,53 @@ class Tokenizer:
                     input_str_length = len(after)
                     i = -1
                 
-            i += 1
+            i += 1"""
+        
+        output_list = []
+
+        start_index = 0
+        end_index = 0
+        
+        slicing = False
+
+        for i in range(len(self.input)):
+            current_char = self.input[i]
+            toAppend = None
+
+            if self.isOperator(current_char):
+                toAppend = Token(TokenType.OPERATOR, current_char)
+                slicing = False
+            elif self.isNumeric(current_char):
+                if not slicing:
+                    start_index = i
+                    end_index = i
+
+                slicing = True
+                end_index += 1 
+
+            if i == len(self.input) - 1:
+                slicing = False
+
+            if start_index != 0 and end_index != 0 and slicing == False:
+                slice = self.input[start_index:end_index]
+                output_list.append(Token(TokenType.NUMBER, slice))
+                start_index = 0
+                end_index = 0
+
+            if toAppend != None:
+                output_list.append(toAppend)
+
+        print(f"Token values are: ")
+        for i in range(len(output_list)):
+            print(output_list[i].value)
 
     def treeify(self):
         return None
 
-    def isNumeric(self, string):
-        return string.isnumeric() or string == "." or string == "-"
+    def isOperator(self, char):
+        return char == "+" or char == "*" or char == "/" or char == "^"
+
+    def isNumeric(self, char):
+        return char.isnumeric() or char == "." or char == "-"
 
 tokenizer = Tokenizer("+123--456")

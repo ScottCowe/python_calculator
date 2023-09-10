@@ -3,6 +3,7 @@ from enum import Enum
 class TokenType(Enum):
     NUMBER = 0
     OPERATOR = 1
+    EXPRESSION = 2
 
 class Token:
     def __init__(self, type, value):
@@ -53,6 +54,8 @@ class Tokenizer:
                 output_string += "+"
                 current_char = "" # I don't really like this solution but eh
 
+            # TODO: Fix -- 
+
             output_string += current_char
 
         self.input = output_string
@@ -60,66 +63,77 @@ class Tokenizer:
 
     # Parses the input into an array of tokens
     def parse_input(self):
-        """input_str = self.input
-        input_str_length = len(self.input)
-        end_index = 0
+        output_list = []
+
+        input_string = self.input
+        input_string_length = len(self.input)
+
+        slicing = False
+        wasSlicing = False
 
         i = 0
 
-        isNumeric = False
-        isOperator = False
-        isParenthesis = False
+        while i < input_string_length:
+            current_char = input_string[i]
+            previous_char = input_string[i - 1]
 
-        while i < input_str_length:
-            current_char = input_str[i]
-            isNumeric = self.isNumeric(current_char)
-            isOperator = current_char == "+" or current_char == "*" or current_char == "/" or current_char == "^"
-            isParenthesis = current_char == "(" or current_char == ")"
+            print(f"Input string: {input_string} {input_string_length}")
+            print(f"i: {i} {current_char}")
 
-            print(f"Input string: {input_str}")
-            print(f"{i} {current_char}")
-            print(f"{isNumeric} {isOperator} {isParenthesis}")
+            if self.isOperator(current_char):
+                output_list.append(Token(TokenType.OPERATOR, current_char))
 
-            if isOperator:
-                self.tokens.append(Token(TokenType.OPERATOR, current_char))
-                after = input_str[1:]
-                input_str = after
-                input_str_length = len(after)
+                # Slice
+                input_string = input_string[1:]
+                input_string_length = len(input_string)
                 i = -1
-            elif isNumeric:
-                if i == input_str_length - 1: # At end of string
-                    self.tokens.append(Token(TokenType.NUMBER, input_str))
-                    print("end")
+                slicing = False
+            elif self.isNumeric(current_char):
+                slicing = True
+            else:
+                slicing = False
+                wasSlicing = True
 
-                    for i in range(len(self.tokens)):
-                        print(self.tokens[i].value)
-                elif self.isNumeric(input_str[i + 1]): # Next char is numeric
-                    end_index += 1
-                    print("incremented end index")
-                else:
-                    print(f"End index is {end_index}")
-                    print(f"Char at end index is {input_str[end_index]}")
-                    before = input_str[:end_index + 1]
-                    after = input_str[end_index + 1:]
-                    self.tokens.append(Token(TokenType.NUMBER, before))
-                    input_str = after
-                    input_str_length = len(after)
-                    i = -1
-                
-            i += 1"""
-        
-        output_list = []
+            if slicing == False and wasSlicing == True:
+                wasSlicing = False
+                slice = input_string[i:]
+                print(slice)
 
+            i += 1
+
+        """
         start_index = 0
         end_index = 0
         
         slicing = False
 
+        openingParentheisCount = 0
+        closingParenthesisCount = 0
+
         for i in range(len(self.input)):
             current_char = self.input[i]
             toAppend = None
+            
+            if current_char == "(":
+                if not slicing:
+                    start_index = i
+                    end_index = i
+                    slicing = True
+                
+                end_index += 1
+                openingParentheisCount += 1
+            elif current_char == ")":
+                closingParenthesisCount += 1
 
-            if self.isOperator(current_char):
+                if openingParentheisCount == closingParenthesisCount:
+                    print(f"end slice {i} {current_char}")
+                    print(f"{start_index}   {end_index}")
+                    openingParentheisCount = 0
+                    closingParenthesisCount = 0
+                else:
+                    print(f"skipped {i} {current_char}")
+                
+            elif self.isOperator(current_char):
                 toAppend = Token(TokenType.OPERATOR, current_char)
                 slicing = False
             elif self.isNumeric(current_char):
@@ -132,6 +146,7 @@ class Tokenizer:
 
             if i == len(self.input) - 1:
                 slicing = False
+                slicingParenthesis = False
 
             if start_index != 0 and end_index != 0 and slicing == False:
                 slice = self.input[start_index:end_index]
@@ -140,7 +155,7 @@ class Tokenizer:
                 end_index = 0
 
             if toAppend != None:
-                output_list.append(toAppend)
+                output_list.append(toAppend)"""
 
         print(f"Token values are: ")
         for i in range(len(output_list)):
@@ -155,4 +170,4 @@ class Tokenizer:
     def isNumeric(self, char):
         return char.isnumeric() or char == "." or char == "-"
 
-tokenizer = Tokenizer("+123--456")
+tokenizer = Tokenizer("+123--456(45 + 3)")

@@ -72,7 +72,34 @@ class Tokenizer:
     def parse_input(self):
         output_list = []
 
-        # Add this back
+        input_string = self.input
+        input_string_length = len(self.input)
+
+        slicing = False
+
+        openingBracketCount = 0
+        closingBracketCount = 0
+        
+        i = 0
+
+        while i < input_string_length:
+            current_char = input_string[i]]
+            next_char = input_string[i + 1] if i < input_string_length else ""
+            
+            # Check if slicing should stop
+            #     If openingBracketCount > 0
+            #         
+            #     If current char and next char are different types, stop      
+            #     If next char does not exist, stop
+            #     Else continue
+            
+            # If slicing has stopped, get slice, and add to token list
+            #     Check type of slice and create corrosponding token
+            #     Remove slice from startof input_string and update length
+            #     Set i to 0
+            #     Start slicing
+
+            i += 1
 
         print(f"Token values are: ")
         for i in range(len(output_list)):

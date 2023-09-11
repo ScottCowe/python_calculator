@@ -75,7 +75,7 @@ class Tokenizer:
         input_string = self.input
         input_string_length = len(self.input)
 
-        slicing = False
+        slicing = True
 
         openingBracketCount = 0
         closingBracketCount = 0
@@ -83,15 +83,32 @@ class Tokenizer:
         i = 0
 
         while i < input_string_length:
-            current_char = input_string[i]]
-            next_char = input_string[i + 1] if i < input_string_length else ""
+            
+            current_char = input_string[i]
+            next_char = input_string[i + 1] if i != input_string_length - 1 else ""
+
+            if current_char == "(":
+                openingBracketCount += 1
+                slicing = True
+            elif current_char == ")":
+                closingBracketCount += 1
             
             # Check if slicing should stop
             #     If openingBracketCount > 0
-            #         
+            #         If openBracketCount == closingBracket count, stop
+            #         Else continue
             #     If current char and next char are different types, stop      
             #     If next char does not exist, stop
             #     Else continue
+
+            if openingBracketCount > 0:
+                if openingBracketCount == closingBracketCount:
+                    slicing = False
+            elif (self.isNumeric(current_char) != self.isNumeric(next_char)) or (current_char != "(" and next_char == "("):
+                slicing = False
+            elif next_char == "":
+                slicing = False
+
             
             # If slicing has stopped, get slice, and add to token list
             #     Check type of slice and create corrosponding token
@@ -99,11 +116,29 @@ class Tokenizer:
             #     Set i to 0
             #     Start slicing
 
+            if slicing == False:
+                before = input_string[0:i+1]
+                after = input_string[i+1:]
+                slicing = True
+                i = -1
+                input_string = after
+                input_string_length = len(after)
+
+                tokenType = TokenType.EXPRESSION
+                if self.isOperator(before[0]):
+                    tokenType = TokenType.OPERATOR
+                elif self.isNumeric(before[0]):
+                    tokenType = TokenType.NUMBER
+
+                output_list.append(Token(tokenType, before))
+
             i += 1
 
         print(f"Token values are: ")
+        out_str = ""
         for i in range(len(output_list)):
-            print(output_list[i].value)
+            out_str += output_list[i].value + " "
+        print(out_str)
 
     def treeify(self):
         return None

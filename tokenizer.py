@@ -18,9 +18,13 @@ class Tokenizer:
 
         self.validate_input()
         self.format_input()
-        self.parse_input()
+        self.parsed_list = self.parse_input()
+        self.validate_array()
 
     def validate_input(self):
+        openingParenthesisCount = 0
+        closingParenthesisCount = 0
+        
         for i in range(len(self.input)):
             current_char = self.input[i]
             
@@ -31,8 +35,13 @@ class Tokenizer:
             if not isOperator and not isParenthesis and not isDecimalPoint and not current_char.isnumeric():
                raise Exception("Input is not valid")
 
-            # TODO: Check if every parenthesis closes
-            # TODO: Ensure that operators do not repeat
+            if current_char == "(":
+                openingParenthesisCount += 1
+            elif current_char == ")":
+                closingParenthesisCount += 1
+
+        if openingParenthesisCount != closingParenthesisCount:
+            raise Exception("Unmatched brackets")
 
         print(f"'{self.input}' is valid input")
     
@@ -61,7 +70,7 @@ class Tokenizer:
                 else:
                     before = self.input[0:i-1]
                     after = self.input[i-1:]
-                    self.input = before + "+" + after
+                    self.input = before + ("+" if i != 1 else "") + after # This is to deal with negatives at the start of the expression
                     i += 2
             else:
                 i += 1
@@ -93,14 +102,6 @@ class Tokenizer:
             elif current_char == ")":
                 closingBracketCount += 1
             
-            # Check if slicing should stop
-            #     If openingBracketCount > 0
-            #         If openBracketCount == closingBracket count, stop
-            #         Else continue
-            #     If current char and next char are different types, stop      
-            #     If next char does not exist, stop
-            #     Else continue
-
             if openingBracketCount > 0:
                 if openingBracketCount == closingBracketCount:
                     slicing = False
@@ -108,13 +109,6 @@ class Tokenizer:
                 slicing = False
             elif next_char == "":
                 slicing = False
-
-            
-            # If slicing has stopped, get slice, and add to token list
-            #     Check type of slice and create corrosponding token
-            #     Remove slice from startof input_string and update length
-            #     Set i to 0
-            #     Start slicing
 
             if slicing == False:
                 before = input_string[0:i+1]
@@ -140,8 +134,19 @@ class Tokenizer:
             out_str += output_list[i].value + " "
         print(out_str)
 
-    def treeify(self):
-        return None
+        return output_list
+
+    def validate_array(self):
+        for i in range(len(self.parsed_list)):
+            current_token_type = self.parsed_list[i].type
+            if i % 2 != 0: # Is odd
+                if current_token_type != TokenType.OPERATOR:
+                    raise Exception("Input is not correctly ordered")
+            else: # Is even, should be expression or number
+                if current_token_type == TokenType.OPERATOR:
+                    raise Exception("Input is not correctly ordered")
+        
+        print("Array is ordered correctly")
 
     def isOperator(self, char):
         return char == "+" or char == "*" or char == "/" or char == "^"
@@ -149,4 +154,4 @@ class Tokenizer:
     def isNumeric(self, char):
         return char.isnumeric() or char == "." or char == "-"
 
-tokenizer = Tokenizer("+123--456(45 + 3)")
+tokenizer = Tokenizer("-123--456(45 + 3)")

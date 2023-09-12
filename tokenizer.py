@@ -71,6 +71,9 @@ class Tokenizer:
                     before = self.input[0:i-1]
                     after = self.input[i-1:]
                     self.input = before + ("+" if i != 1 else "") + after # This is to deal with negatives at the start of the expression
+
+                    # TODO: Ensure that negatives before brackets are treated as -1 * bracket
+
                     i += 2
             else:
                 i += 1

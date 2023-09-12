@@ -1,3 +1,5 @@
+from enum import Enum
+
 class Operator():
     def __init__(self, as_char):
         self.as_char = as_char
@@ -31,15 +33,15 @@ class Expression:
         self.right = right
 
     def evaluate(self):
-        match self.operator:
+        match self.operator.type:
             case OperatorType.ADDITION:
-                return float(left) + float(right)
+                return float(self.left) + float(self.right)
             case OperatorType.MULTIPLICATION:
-                return float(left) * float(right)
+                return float(self.left) * float(self.right)
             case OperatorType.DIVISION:
-                return float(left) / float(right)
+                return float(self.left) / float(self.right)
             case OperatorType.EXPONENTIATION:
-                return float(left) ** float(right)
+                return float(self.left) ** float(self.right)
 
 class ExpressionTreeNode:
     def __init__(self, left, right):
@@ -50,10 +52,10 @@ class ExpressionTreeNode:
         self.number = 0.0
         self.operator = OperatorType.ADDITION
 
-    def set_number(number):
+    def set_number(self, number):
         self.number = number
 
-    def set_operator(operator):
+    def set_operator(self, operator):
         self.operator = operator
 
 class Evaluator():
@@ -62,7 +64,11 @@ class Evaluator():
 
     def parse_array(self):
         print()
-        # 
+        # get index of operator with highest prio and create node
+        # check if left and right in array are numbers or expressions
+        # if number, set node children accordingly
+        # else 
+        #   
 
         # For each bracket in array
         #   use tokenizer to parse into array
@@ -71,7 +77,6 @@ class Evaluator():
 
         # linear search for operator of highest prio
         # create node with operator, set left and right accordingly
-        # if left or right is expression
-        
+        # if left or right is expression    
         #   create node with bracket, operator of highest prio, and other number
         

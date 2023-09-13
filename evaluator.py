@@ -1,4 +1,5 @@
 from enum import Enum
+from tokenizer import *
 
 class Operator():
     def __init__(self, as_char):
@@ -43,40 +44,29 @@ class Expression:
             case OperatorType.EXPONENTIATION:
                 return float(self.left) ** float(self.right)
 
-class ExpressionTreeNode:
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
-        
-        self.is_number = True
-        self.number = 0.0
-        self.operator = OperatorType.ADDITION
-
-    def set_number(self, number):
-        self.number = number
-
-    def set_operator(self, operator):
-        self.operator = operator
-
 class Evaluator():
     def __init__(self, array_expression):
         self.array_expression = array_expression
 
-    def parse_array(self):
+    def evaluate(self):
+        input_array = self.array_expression
+
+        for i in range(0, len(input_array)):
+            if input_array[i].type == TokenType.EXPRESSION:
+                print()
+                # Refactor code using dep injection
+        
+        # for each bracket in array
+        #   parse using tokenizer
+        #   recursively evaluate until answer is found
+        #   sub answer into array in place of bracket
+
+        # for all exponentials from left to right
+        #   evaluate exponential and sub into array
+        # for all multiplication and division
+        #   evaluate and sub into array
+        # for all addition
+        #   evaluate and sub into array
+        
         print()
-        # get index of operator with highest prio and create node
-        # check if left and right in array are numbers or expressions
-        # if number, set node children accordingly
-        # else 
-        #   
-
-        # For each bracket in array
-        #   use tokenizer to parse into array
-        #   recursively parse output array to get root node of bracket
-        #   get operator to left and right of bracket index, compare
-
-        # linear search for operator of highest prio
-        # create node with operator, set left and right accordingly
-        # if left or right is expression    
-        #   create node with bracket, operator of highest prio, and other number
         

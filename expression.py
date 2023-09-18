@@ -8,6 +8,21 @@ class Operator:
         if not Operator.isOperator(self.as_str):
             raise Exception(f"'{self.as_str}' is not an operator")
 
+    def perform_operation(self, a, b):
+        match self.as_str:
+            case "+":
+                return a + b
+            case "-":
+                return a - b
+            case "*":
+                return a * b
+            case "/":
+                return a / b
+            case "^":
+                return a ** b
+            case _:
+                raise Exception("Not an operator")
+
     @staticmethod
     def precedence(operator):
         match operator:
@@ -78,20 +93,27 @@ class Expression:
 
         return self
 
-class ExpressionTreeNode:
-    def __init__(self, value, left, right):
-        self.value = value
-        self.left = left
-        self.right = right
-
-class ExpressionTree:
-    def __init__(self):
-        self.root_node = None
-
     @staticmethod
-    def from_postfix(postfix):
-        print()
+    def evaluate(expr):
+        tokens = expr.split(" ")
+        output_stack = Stack()
 
-    @staticmethod
-    def evaluate(expression_tree):
-        return 0
+        for i in tokens:
+            print(f"Current token is {i}")
+            print(f"Stack is {output_stack.asString()}")
+
+            if not Operator.isOperator(i): # Is operand
+                output_stack.push(i)
+                print(f"Pushed operand")
+            else: # Is operator
+                operator = Operator(i)
+                b = float(output_stack.pop())
+                a = float(output_stack.pop())
+                result = operator.perform_operation(a, b)
+                output_stack.push(result)
+                print(f"Pushed result of {a} {i} {b} = {result}")
+
+        print(f"At end stack is {output_stack.asString()}")
+
+        output_stack.pop() # Empty str at end of expr
+        return output_stack.pop()    

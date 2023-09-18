@@ -34,6 +34,6 @@ class Stack:
         result = "["
 
         for i in self.stack_arr:
-            result += i + ", "
+            result += str(i) + ", "
 
         return result + "]"

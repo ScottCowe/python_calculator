@@ -33,7 +33,8 @@ class Stack:
     def asString(self):
         result = "["
 
-        for i in self.stack_arr:
-            result += str(i) + ", "
+        for i in range(len(self.stack_arr)):
+            result += ", " if i != 0 else ""
+            result += str(self.stack_arr[i])
 
         return result + "]"

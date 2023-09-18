@@ -86,8 +86,11 @@ class Expression:
             else: # token is a number
                 postfix += i + " "
 
+        start = True
         while not stack.isEmpty():
-            postfix += stack.pop() + " "
+            postfix += " " if not start else ""
+            postfix += stack.pop()
+            start = False
 
         self.expr = postfix
 
@@ -99,21 +102,13 @@ class Expression:
         output_stack = Stack()
 
         for i in tokens:
-            print(f"Current token is {i}")
-            print(f"Stack is {output_stack.asString()}")
-
             if not Operator.isOperator(i): # Is operand
                 output_stack.push(i)
-                print(f"Pushed operand")
             else: # Is operator
                 operator = Operator(i)
                 b = float(output_stack.pop())
                 a = float(output_stack.pop())
                 result = operator.perform_operation(a, b)
                 output_stack.push(result)
-                print(f"Pushed result of {a} {i} {b} = {result}")
 
-        print(f"At end stack is {output_stack.asString()}")
-
-        output_stack.pop() # Empty str at end of expr
         return output_stack.pop()    
